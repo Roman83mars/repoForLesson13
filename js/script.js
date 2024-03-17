@@ -5,7 +5,7 @@ const headerInput = document.querySelector('.header-input')
 const todoList = document.querySelector('.todo-list')
 const todoCompleted = document.querySelector('.todo-completed')
 
-const todoData = []
+let todoData = []
 
 const render = function () {
     todoList.innerHTML = ''
@@ -33,7 +33,13 @@ const render = function () {
             item.completed = !item.completed
             render()
         })
+        li.querySelector('.todo-remove').addEventListener('click', function () {
+            todoData.splice(todoData.indexOf(item), 1)
+            render()
+        })
+
     })
+    localStorage.setItem('todoData', JSON.stringify(todoData))
 }
 
 todoControl.addEventListener('submit', function (event) {
@@ -43,9 +49,21 @@ todoControl.addEventListener('submit', function (event) {
         text: headerInput.value,
         completed: false
     }
+    if (headerInput.value.trim() == '') {
+        headerInput.value = ''
+    } else {
+        todoData.push(newTodo)
+        headerInput.value = ''
+    }
+    render()
+})
 
-    todoData.push(newTodo)
-    headerInput.value = ''
+document.addEventListener('DOMContentLoaded', function () {
+    if (JSON.parse(localStorage.getItem('todoData')) !== null) {
+        todoData = JSON.parse(localStorage.getItem('todoData'))
+    } else {
+        todoData = []
+    }
 
     render()
 })
